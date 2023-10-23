@@ -1,21 +1,15 @@
-import { FilterInput, FilterSection } from './Filter.styled';
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const Filter = ({ value, onChange }) => {
+const Filter = ({ value, onFilter }) => {
   return (
-    <FilterSection>
-      <h2>Contacts</h2>
-      <field>
-        <FilterInput
-          placeholder="Find contact"
-          type="text"
-          name="filter"
-          value={value}
-          onChange={onChange}
-        />
-      </field>
-    </FilterSection>
+    <input type="text" value={value} placeholder="Filter" onChange={onFilter} />
   );
+};
+
+Filter.propTypes = {
+  value: PropTypes.string.isRequired,
+  onFilter: PropTypes.func.isRequired,
 };
 
 export default Filter;

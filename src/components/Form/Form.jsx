@@ -1,61 +1,62 @@
-import React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import {
-  StyledForm,
-  Label,
-  StyledField,
-  ErrorMsg,
-  InputContainer,
-  ButtonForm,
-} from './Form.styled';
 
-const formSchema = Yup.object().shape({
-  name: Yup.string()
-    .matches(/^[a-zA-Z\s]+$/, 'Only letters are allowed')
-    .min(3, 'Too Short!')
-    .required('This field is required, please fill that'),
-  number: Yup.string()
-    .matches(/^\d{3}-\d{2}-\d{2}$/, 'Must be in format: 000-00-00')
-    .required('This field is required, please fill that'),
-});
+export default function MyForm({ onSubmitForm }) {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-const MyForm = ({ onSubmit }) => {
+  const onSubmit = e => {
+    e.preventDefault();
+    onSubmitForm({ name, number });
+    formReset();
+  };
+
+  const formReset = () => {
+    setName('');
+    setNumber('');
+  };
+
+  const onChangeName = e => {
+    setName(e.currentTarget.value);
+  };
+
+  const onChangeTel = e => {
+    setNumber(e.currentTarget.value);
+  };
+
   return (
-    <Formik
-      initialValues={{
-        name: '',
-        number: '',
-      }}
-      validationSchema={formSchema}
-      onSubmit={(values, actions) => {
-        onSubmit(values);
-        actions.resetForm();
-      }}
-    >
-      <StyledForm>
-        <InputContainer>
-          <StyledField type="text" name="name" placeholder=" " />
-          <Label htmlFor="name">Please enter name:</Label>
-
-          <ErrorMsg name="name" component="div" />
-        </InputContainer>
-        <InputContainer>
-          <StyledField type="tel" name="number" placeholder=" " />
-          <Label htmlFor="number">Please enter number:</Label>
-
-          <ErrorMsg name="number" component="div" />
-        </InputContainer>
-
-        <ButtonForm type="submit">Add contact</ButtonForm>
-      </StyledForm>
-    </Formik>
+    <form onSubmit={onSubmit}>
+      <label>
+        Name:
+        <input
+          type="text"
+          onChange={onChangeName}
+          value={name}
+          name="name"
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+          required
+        />
+      </label>
+      <label>
+        Number:
+        <input
+          type="tel"
+          value={number}
+          onChange={onChangeTel}
+          name="number"
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+          required
+        />
+      </label>
+      <button type="submit" onSubmit={onSubmit}>
+        Add contact
+      </button>
+    </form>
   );
-};
-
-export default MyForm;
+}
 
 MyForm.propTypes = {
-  onSubmit: PropTypes.func,
+  onSubmitForm: PropTypes.func.isRequired,
 };
